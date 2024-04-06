@@ -1,5 +1,5 @@
 function updateCountdown() {
-    const countdownDate = new Date("April 6, 2024 20:00:00 UTC").getTime();
+    const countdownDate = new Date("April 7, 2024 12:00:00 UTC").getTime();
     const now = new Date().getTime();
     const difference = countdownDate - now;
 
