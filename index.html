@@ -1,16 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEH airdrop</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div id="countdown">
-        <h1 id="timer"></h1>
-    </div>
-    <p><a href="https://t.me/mehtoken" target="_blank">Telegram Channel</a></p>
-    <script src="script.js"></script>
-</body>
+  <head>
+    <script type="module">
+      import * as buffer from "buffer";
+      window.Buffer = buffer.Buffer;
+    </script>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Staking</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

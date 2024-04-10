@@ -1,0 +1,196 @@
+body {
+    margin: 0px;
+    background-color: #16191B;
+    color: #9FA2A4;
+}
+
+.Footer {
+    position: fixed;
+    bottom: 20px;
+}
+
+input {
+    height: 30px;
+    border-radius: 10px;
+    padding: 0.2em 1.2em;
+    padding-left: 45px;
+    border: 1px solid transparent;
+    font-weight: 500;
+    font-size: 16px;
+    font-family: inherit;
+    /* background-color: #f5f7fa; */
+    background: #1c2225;
+    border-color: #232A2E;
+    color: #9FA2A4;
+    outline: 0px;
+    width: 180px;
+    @media (max-width: 570px) {
+        width: 140px;
+	}
+    @media (max-width: 460px) {
+        width: 200px;
+	}
+}
+
+a {
+    color: #9FA2A4;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.Main {
+    position: relative;
+    height: 100vh;
+    max-width: 1144px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.ConBtn {
+    position: absolute;
+    top: 20px;
+    right: 0px;
+}
+
+.Title {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.InputU {
+    position: relative;
+}
+
+.InputUImg {
+    border-radius: 999px;
+    width: 30px;
+    height: 30px;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    position: absolute;
+}
+
+.NotDisab {
+    height: 30px;
+    border-radius: 10px;
+    padding: 0.2em 1.2em;
+    padding-left: 45px;
+    border: 1px solid transparent;
+    font-weight: 500;
+    font-size: 16px;
+    font-family: inherit;
+    /* background-color: #f5f7fa; */
+    background: linear-gradient(180deg, #272E32 0%, #232A2E 100%);
+    border-color: transparent;
+    color: #9FA2A4;
+    cursor: pointer;
+    transition: border-color 0.25s;
+    outline: 0px;
+    width: 180px;
+    @media (max-width: 570px) {
+        width: 140px;
+	}
+    @media (max-width: 460px) {
+        width: 200px;
+	}
+}
+
+.NotDisab:hover {
+  border-color: #5358bf;
+}
+
+.NotDisab:focus,
+.NotDisab:focus-visible {
+    border-color: #5358bf;
+}
+
+.FlipClock {
+    @media (max-width: 570px) {
+        transform: scale(0.8);
+	}
+    @media (max-width: 385px) {
+        transform: scale(0.7);
+	}
+}
+
+.Tog {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+    @media (max-width: 460px) {
+        flex-direction: column;
+	}
+}
+
+.Stake {
+    margin-top: 20px;
+    width: 250px;
+    color: #FFF;
+    font-size: 18px;
+    font-weight: 500;
+    border-radius: 15px;
+    padding: 8px;
+    background: linear-gradient(178deg, #00D1FF -11.21%, #009AFF 98.65%);;
+}
+
+.Info {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.AllTitle {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.Sm {
+    width: 140px;
+}
+
+.Tog2 {
+    display: flex;
+    gap: 30px;
+    @media (max-width: 460px) {
+        flex-direction: column;
+	}
+}
+
+.BtnCon2 {
+    width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 16px;
+
+    border-radius: 15px;
+    background: linear-gradient(178deg, #00D1FF -11.21%, #009AFF 98.65%);;
+    color: #FFF;
+}
+
+.Center {
+    text-align: center;
+}
+
+.H1 {
+    margin-bottom: 0;
+}
+
+.H3 {
+    margin-top: 0;
+}
+
+.Tog3 {
+    display: flex;
+    gap: 20px;
+    @media (max-width: 460px) {
+        flex-direction: column;
+	}
+}
