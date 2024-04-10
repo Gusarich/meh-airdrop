@@ -8,7 +8,7 @@ import App from './App'
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <TonConnectUIProvider manifestUrl="https://raw.githubusercontent.com/ton-defi-org/tonconnect-manifest-temp/main/tonconnect-manifest.json">
+  <TonConnectUIProvider manifestUrl="https://mishazhem.github.io/Anon_Meh/manifest.json">
     <React.StrictMode>
       <App />
     </React.StrictMode>

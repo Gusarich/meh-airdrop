@@ -5,7 +5,7 @@ body {
 }
 
 .Footer {
-    position: fixed;
+    position: absolute;
     bottom: 20px;
 }
 
@@ -41,7 +41,7 @@ a {
 
 .Main {
     position: relative;
-    height: 100vh;
+    min-height: 100vh;
     max-width: 1144px;
     display: flex;
     flex-direction: column;
@@ -49,6 +49,11 @@ a {
     align-items: center;
     margin-left: auto;
     margin-right: auto;
+    @media (max-width: 460px) {
+        min-height: calc(100vh - 80px - 50px);
+        padding-top: 50px;
+        padding-bottom: 70px;
+	}
 }
 
 .ConBtn {
@@ -65,6 +70,18 @@ a {
 
 .InputU {
     position: relative;
+    @media (max-width: 460px)
+    {
+        width: 265px;
+    }
+}
+
+.InputU2 {
+    position: relative;
+    @media (max-width: 460px)
+    {
+        width: 205px;
+    }
 }
 
 .InputUImg {
@@ -137,7 +154,13 @@ a {
     font-weight: 500;
     border-radius: 15px;
     padding: 8px;
-    background: linear-gradient(178deg, #00D1FF -11.21%, #009AFF 98.65%);;
+    background: linear-gradient(178deg, #00D1FF -11.21%, #009AFF 98.65%);
+    @media (max-width: 530px) {
+        width: 200px;
+	}
+    @media (max-width: 460px) {
+        width: 250px;
+	}
 }
 
 .Info {
@@ -161,6 +184,8 @@ a {
     gap: 30px;
     @media (max-width: 460px) {
         flex-direction: column;
+        justify-content: center;
+        align-items: center;
 	}
 }
 
@@ -193,4 +218,29 @@ a {
     @media (max-width: 460px) {
         flex-direction: column;
 	}
+}
+
+.Show {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.H5 {
+    margin: 0;
+    color: rgba(159, 162, 164, 0.5);
+}
+
+.Anoun {
+    margin-bottom: 0px;
+    margin-top: 10px;
+    font-size: 20px;
+    color: rgba(164, 55, 53, 1);
+}
+
+.Anoun2 {
+    margin-bottom: 0px;
+    margin-top: 10px;
+    font-size: 14px;
+    color: rgba(164, 55, 53, 1);
 }

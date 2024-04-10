@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "meh.promo",
+  "homepage": "https://meh.promo/",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
