@@ -133,12 +133,12 @@ function App() {
   }
 
   async function Go2() {
-    if (tonConnectUI.account?.address == null) return;
+    if (wallet?.account?.address == null) return;
     const client = await getClient();
     let MasterContract = await client.open(Master.createFromAddress(Address.parse(MasterAddress)));
-    let HelperContract = await client.open(await MasterContract.getHelper(Address.parse(tonConnectUI.account?.address)));
-    const Amount1 = HelperNumber1.slice(0, -5);
-    const Amount2 = HelperNumber2.slice(0, -4);
+    let HelperContract = await client.open(await MasterContract.getHelper(Address.parse(wallet?.account?.address)));
+    const Amount1 = HelperNumber1.slice(0, -5).replaceAll(",", "");
+    const Amount2 = HelperNumber2.slice(0, -4).replaceAll(",", "");
     const body = beginCell()
     .storeUint(0x30daa8f0, 32)
     .storeUint(0, 64)
@@ -146,15 +146,15 @@ function App() {
     .storeCoins(toNano(Amount2))
     .endCell();
     await tonConnectUI.sendTransaction({
-			messages: [
-				{
-					address: HelperContract.address.toString(), // this.Master.address.toString()
-					amount: toNano(0.2).toString(),
-					payload: body.toBoc().toString("base64") 
-				},
-			],
-			validUntil: Date.now() + 5 * 60 * 1000
-		})
+      messages: [
+        {
+          address: HelperContract.address.toString(), // this.Master.address.toString()
+          amount: toNano(0.2).toString(),
+          payload: body.toBoc().toString("base64") 
+        },
+      ],
+      validUntil: Date.now() + 5 * 60 * 1000
+    })
     // await HelperContract.sendUnstake(
     //   new Sender(tonConnectUI),
     //   toNano(0.2),
