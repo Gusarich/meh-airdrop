@@ -53,8 +53,8 @@ function App() {
   const [Balance2, setBalance2] = useState("0 MEH");
   const [MasterNumber1, setMasterNumber1] = useState("0");
   const [MasterNumber2, setMasterNumber2] = useState("0");
-  const [HelperNumber1, setHelperNumber1] = useState("0");
-  const [HelperNumber2, setHelperNumber2] = useState("0");
+  const [HelperNumber1, setHelperNumber1] = useState("0 ANON");
+  const [HelperNumber2, setHelperNumber2] = useState("0 MEH");
   const [Text, setText] = useState("not enough MEH");
   const [Enough, setEnough] = useState(true);
   const [Announcement, setAnnouncement] = useState(false);
@@ -104,6 +104,8 @@ function App() {
     if (wallet?.account?.address != null) { 
         Bal1 = await GetBalance(ANON);
         Bal2 = await GetBalance(MEH);
+        setBalance1(Bal1.replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " ANON");
+        setBalance2(Bal2.replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " MEH");
     }
     try {
       const T1 = (document.getElementById("ANON") as HTMLInputElement).value.replaceAll(",", "");
@@ -122,8 +124,6 @@ function App() {
       let Data = await HelperContract.getContractData()
       setHelperNumber1((Data.amount1 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " ANON");
       setHelperNumber2((Data.amount2 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " MEH");
-      setBalance1(Bal1.replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " ANON");
-      setBalance2(Bal2.replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " MEH");
       if ((Data.amount2 / toNano(1)) != (Data.amount1 / toNano(1)) * R) {
         setAnnouncement(true);
       } else {
