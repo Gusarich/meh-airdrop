@@ -28,7 +28,7 @@ export class Sender implements ISender {
             .store(storeStateInit(stateInit))
             .endCell();
         let state_init_boc = TonWeb.utils.bytesToBase64(await stateInitCell.toBoc());
-        this.connector.sendTransaction({
+        await this.connector.sendTransaction({
             messages: [
                 {
                     address: args.to.toString(),

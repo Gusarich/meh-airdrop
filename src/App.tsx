@@ -1,6 +1,7 @@
 import { TonConnectButton, TonConnectUIProvider, useTonConnectUI, useTonWallet  } from "@tonconnect/ui-react";
 import './App.css'
 import * as buffer from "buffer"
+import { JettonWallet } from '../wrappers/JettonWallet';
 import FlipClockCountdown from '@leenguyen/react-flip-clock-countdown';
 import '@leenguyen/react-flip-clock-countdown/dist/index.css';
 import { anon, meh } from "./assets";
@@ -16,6 +17,7 @@ interface InputProps {
   disabled: boolean;
   img: string;
   placeholder: string;
+  CurValue: string;
   id: string;
   onChange: ChangeEventHandler<HTMLInputElement>;
 };
@@ -23,7 +25,7 @@ interface InputProps {
 function InputU(props: InputProps) {
   return (
     <div className="InputU"> 
-      <input min="0" defaultValue={props.value} disabled={props.disabled} onChange={(e: any) => props.onChange(e.target.value)} id={props.id} placeholder={props.placeholder} type="number" className="NotDisab InputUMain" />
+      <input min="0" value={props.CurValue} disabled={props.disabled} onChange={(e: any) => props.onChange(e.target.value)} id={props.id} placeholder={props.placeholder} type="text" className="NotDisab InputUMain" />
       <img src={props.img} className="InputUImg" alt="" />
     </div>
   );
@@ -31,7 +33,7 @@ function InputU(props: InputProps) {
 
 function InputU2(props: InputProps) {
   return (
-    <div className="InputU"> 
+    <div className="InputU2"> 
       <input min="0" value={props.value.toString()} disabled={props.disabled} onChange={(e: any) => props.onChange(e.target.value)} id={props.id} placeholder={props.placeholder} type="text" className="InputUMain Sm" />
       <img src={props.img} className="InputUImg" alt="" />
     </div>
@@ -45,20 +47,47 @@ function App() {
   const [startTime, setStartTime] = useState(0);
   const [reward, setReward] = useState("0");
   const [Open, setOpen] = useState(false);
+  const [value1, setValue1] = useState("");
+  const [value2, setValue2] = useState("");
+  const [Balance1, setBalance1] = useState("0 ANON");
+  const [Balance2, setBalance2] = useState("0 MEH");
   const [MasterNumber1, setMasterNumber1] = useState("0");
   const [MasterNumber2, setMasterNumber2] = useState("0");
   const [HelperNumber1, setHelperNumber1] = useState("0");
   const [HelperNumber2, setHelperNumber2] = useState("0");
+  const [Text, setText] = useState("not enough MEH");
+  const [Enough, setEnough] = useState(true);
+  const [Announcement, setAnnouncement] = useState(false);
   const MasterAddress = "EQAx-B_myGJ6i7u6_JRZz33n9fDfIF_NF3bwPt3OwP6p_py1";
   const ANON = "EQDv-yr41_CZ2urg2gfegVfa44PDPjIK9F-MilEDKDUIhlwZ";
   const MEH = "EQAVw-6sK7NJepSjgH1gW60lYEkHYzSmK9pHbXstCClDY4BV";
 
   function AnonChange(val: any) {
-    (document.getElementById("MEH") as HTMLInputElement).value = (Number(val) * ratio).toString();
+    const T = val.replaceAll(",", "");
+    setValue1(T.replace(/(\d)(?=(\d{3})+$)/g, "$1,"));
+    // (document.getElementById("MEH") as HTMLInputElement).value = (Number(val) * ratio).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,");
+    setValue2((Number(T) * ratio).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,"));
+    if (toNano(T) > toNano(Balance1.slice(0, -5).replaceAll(",", "")) || toNano(Number(T) * ratio) > toNano(Balance2.slice(0, -4).replaceAll(",", ""))) {
+      setEnough(false);
+      if (toNano(T) > toNano(Balance1.slice(0, -5).replaceAll(",", ""))) setText("not enough ANON");
+      else setText("not enough MEH");
+    } else {
+      setEnough(true);
+    }
   }
   
   function MehChange(val: any) {
-    (document.getElementById("ANON") as HTMLInputElement).value = (Number(val) / ratio).toString();
+    const T = val.replaceAll(",", "");
+    setValue2(T.replace(/(\d)(?=(\d{3})+$)/g, "$1,"));
+    // (document.getElementById("ANON") as HTMLInputElement).value = (Number(val) / ratio).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,");
+    setValue1((Number(T) / ratio).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,"));
+    if (toNano(T) > toNano(Balance2.slice(0, -4).replaceAll(",", "")) || toNano(Number(T) / ratio) > toNano(Balance1.slice(0, -5).replaceAll(",", ""))) {
+      setEnough(false);
+      if (toNano(T) > toNano(Balance2.slice(0, -4).replaceAll(",", ""))) setText("not enough MEH");
+      else setText("not enough ANON");
+    } else {
+      setEnough(true);
+    }
   }
 
   async function GetInfo(){
@@ -67,41 +96,98 @@ function App() {
     let Data = await MasterContract.getContractData()
     setStartTime(Data.startTime * 1000);
     setRatio(Number(Data.ratio));
-    setMasterNumber1((Data.amount1 / toNano(1)).toString() + " ANON");
-    setMasterNumber2((Data.amount2 / toNano(1)).toString() + " MEH");
+    const R = Data.ratio;
+    setMasterNumber1((Data.amount1 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " ANON");
+    setMasterNumber2((Data.amount2 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " MEH");
     setReward((Data.rewards / toNano(1)).toString());
+    let Bal1 = "0 ANON", Bal2 = "0 MEH";
+    if (wallet?.account?.address != null) { 
+        Bal1 = await GetBalance(ANON);
+        Bal2 = await GetBalance(MEH);
+    }
+    try {
+      const T1 = (document.getElementById("ANON") as HTMLInputElement).value.replaceAll(",", "");
+      const T2 = (document.getElementById("MEH") as HTMLInputElement).value.replaceAll(",", "");
+      if (toNano(T1) > toNano(Bal1) || toNano(T2) > toNano(Bal2)) {
+        setEnough(false);
+        if (toNano(T1) > toNano(Bal1)) setText("not enough ANON");
+        else setText("not enough MEH");
+      } else {
+        setEnough(true);
+      }
+    } catch {}
     if (wallet?.account?.address != null) {
       setOpen(true);
       let HelperContract = await client.open(await MasterContract.getHelper(Address.parse(wallet?.account?.address)));
       let Data = await HelperContract.getContractData()
-      setHelperNumber1((Data.amount1 / toNano(1)).toString() + " ANON");
-      setHelperNumber2((Data.amount2 / toNano(1)).toString() + " MEH");
+      setHelperNumber1((Data.amount1 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " ANON");
+      setHelperNumber2((Data.amount2 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " MEH");
+      setBalance1(Bal1.replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " ANON");
+      setBalance2(Bal2.replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " MEH");
+      if ((Data.amount2 / toNano(1)) != (Data.amount1 / toNano(1)) * R) {
+        setAnnouncement(true);
+      } else {
+        setAnnouncement(false);
+      }
     } 
   }
 
   async function Go2() {
-    if (tonConnectUI.account?.address == null) return;
+    if (wallet?.account?.address == null) return;
     const client = await getClient();
     let MasterContract = await client.open(Master.createFromAddress(Address.parse(MasterAddress)));
-    let HelperContract = await client.open(await MasterContract.getHelper(Address.parse(tonConnectUI.account?.address)));
-    await HelperContract.sendUnstake(
-      new Sender(tonConnectUI),
-      toNano(0.2),
-      {
-        amount1: toNano(HelperNumber1.slice(0, -5)),
-        amount2: toNano(HelperNumber2.slice(0, -4)),
-      }
-    )
+    let HelperContract = await client.open(await MasterContract.getHelper(Address.parse(wallet?.account?.address)));
+    const Amount1 = HelperNumber1.slice(0, -5).replaceAll(",", "");
+    const Amount2 = HelperNumber2.slice(0, -4).replaceAll(",", "");
+    const body = beginCell()
+    .storeUint(0x30daa8f0, 32)
+    .storeUint(0, 64)
+    .storeCoins(toNano(Amount1))
+    .storeCoins(toNano(Amount2))
+    .endCell();
+    await tonConnectUI.sendTransaction({
+      messages: [
+        {
+          address: HelperContract.address.toString(), // this.Master.address.toString()
+          amount: toNano(0.2).toString(),
+          payload: body.toBoc().toString("base64") 
+        },
+      ],
+      validUntil: Date.now() + 5 * 60 * 1000
+    })
+    // await HelperContract.sendUnstake(
+    //   new Sender(tonConnectUI),
+    //   toNano(0.2),
+    //   {
+    //     amount1: toNano(HelperNumber1.slice(0, -5)),
+    //     amount2: toNano(HelperNumber2.slice(0, -4)),
+    //   }
+    // )
+  }
+
+  async function GetBalance(address: string) {
+    if (tonConnectUI.account?.address == null) return "0";
+    const client = await getClient();
+		let jettonMasterJUSD = client.open(JettonMaster.create(Address.parse(address)));
+		let jettonWalletJUSD = await jettonMasterJUSD.getWalletAddress(Address.parse(tonConnectUI.account?.address));
+		let ContactJUSD = await client.open(JettonWallet.createFromAddress(Address.parse(jettonWalletJUSD.toString())));
+		const Ans = await ContactJUSD.getJettonBalance();
+    return (Ans / toNano(1)).toString();
   }
 
   async function Go() {
     if (tonConnectUI.account?.address == null) return;
+    const T1 = (document.getElementById("ANON") as HTMLInputElement).value.replaceAll(",", "");
+    const T2 = (document.getElementById("MEH") as HTMLInputElement).value.replaceAll(",", "");
+    if (toNano(T1) > toNano(Balance1.slice(0, -5).replaceAll(",", "")) || toNano(T2) > toNano(Balance2.slice(0, -4).replaceAll(",", ""))) {
+      return;
+    }
     const client = await getClient();
     // ANON
     let body1 = beginCell()
         .storeUint(0xf8a7ea5, 32)         
         .storeUint(0, 64)                       
-        .storeCoins(toNano((document.getElementById("ANON") as HTMLInputElement).value)) // amount                
+        .storeCoins(toNano((document.getElementById("ANON") as HTMLInputElement).value.replaceAll(",", ""))) // amount                
         .storeAddress(Address.parse(MasterAddress))                 
         .storeAddress(Address.parse(tonConnectUI.account.address))             
         .storeUint(0, 1)                      
@@ -114,7 +200,7 @@ function App() {
     let body = beginCell()
         .storeUint(0xf8a7ea5, 32)         
         .storeUint(0, 64)                       
-        .storeCoins(toNano((document.getElementById("MEH") as HTMLInputElement).value)) // amount                
+        .storeCoins(toNano((document.getElementById("MEH") as HTMLInputElement).value.replaceAll(",", ""))) // amount                
         .storeAddress(Address.parse(MasterAddress))                 
         .storeAddress(Address.parse(tonConnectUI.account.address))             
         .storeUint(0, 1)                      
@@ -166,20 +252,28 @@ function App() {
       {!Open ? "" :
         <>
           <div className="Tog">
-            <InputU value={"0"} disabled={false} onChange={AnonChange} img={anon} placeholder={"ANON"} id={"ANON"} />
-            <InputU value={"0"} disabled={false} onChange={MehChange} img={meh} placeholder={"MEH"} id={"MEH"} />
+            <div className="Show">
+              <h5 className="H5">available: {Balance1}</h5>
+              <InputU CurValue={value1} value={"0"} disabled={false} onChange={AnonChange} img={anon} placeholder={"ANON"} id={"ANON"} />
+            </div>
+            <div className="Show">
+              <h5 className="H5">available: {Balance2}</h5>
+              <InputU CurValue={value2} value={"0"} disabled={false} onChange={MehChange} img={meh} placeholder={"MEH"} id={"MEH"} />
+            </div>
           </div>
           <div className="Tog3">
             <button onClick={Go} className="Stake">Stake</button>
             <button onClick={Go2} className="Stake">Unstake all</button>
           </div>
+          {!Enough ? <h4 className="Anoun">{Text}</h4> : ""}
+          {Announcement ? <h4 className="Anoun2">Your MEH to ANON ratio is incorrect. Please “Unstake all” and stake again.</h4> : ""}
         </> 
       }
       <div className="Info">
         <h1 className="AllTitle">Total staked</h1>
         <div className="Tog2">
-          <InputU2 value={MasterNumber1} disabled={true} onChange={AnonChange} img={anon} placeholder={"ANON"} id={"ANON"} />
-          <InputU2 value={MasterNumber2} disabled={true} onChange={MehChange} img={meh} placeholder={"MEH"} id={"MEH"} />
+          <InputU2 CurValue={""} value={MasterNumber1} disabled={true} onChange={AnonChange} img={anon} placeholder={"ANON"} id={"ANON"} />
+          <InputU2 CurValue={""} value={MasterNumber2} disabled={true} onChange={MehChange} img={meh} placeholder={"MEH"} id={"MEH"} />
         </div>
         {!Open ? 
         <>
@@ -189,8 +283,8 @@ function App() {
         <>
           <h1 className="AllTitle">Your stake</h1>
           <div className="Tog2">
-            <InputU2 value={HelperNumber1} disabled={true} onChange={AnonChange} img={anon} placeholder={"ANON"} id={"ANON"} />
-            <InputU2 value={HelperNumber2} disabled={true} onChange={MehChange} img={meh} placeholder={"MEH"} id={"MEH"} />
+            <InputU2 CurValue={""} value={HelperNumber1} disabled={true} onChange={AnonChange} img={anon} placeholder={"ANON"} id={"ANON"} />
+            <InputU2 CurValue={""} value={HelperNumber2} disabled={true} onChange={MehChange} img={meh} placeholder={"MEH"} id={"MEH"} />
           </div>
         </>}
       </div>
