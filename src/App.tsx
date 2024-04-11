@@ -51,6 +51,7 @@ function App() {
   const [value2, setValue2] = useState("");
   const [Balance1, setBalance1] = useState("0 ANON");
   const [Balance2, setBalance2] = useState("0 MEH");
+  const [APR, setAPR] = useState("0");
   const [MasterNumber1, setMasterNumber1] = useState("0");
   const [MasterNumber2, setMasterNumber2] = useState("0");
   const [HelperNumber1, setHelperNumber1] = useState("0 ANON");
@@ -99,7 +100,12 @@ function App() {
     const R = Data.ratio;
     setMasterNumber1((Data.amount1 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " ANON");
     setMasterNumber2((Data.amount2 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " MEH");
-    setReward((Data.rewards / toNano(1)).toString());
+    let MnAmount = Data.amount1 * Data.ratio;
+    if (Data.amount2 < MnAmount) { MnAmount = Data.amount2; }
+    const ResultAPR = 1000000000000000000 / Number(MnAmount) / 21 * 365;
+    console.log(1, MnAmount, 1000000000000000000 / Number(MnAmount), ResultAPR)
+    setAPR(ResultAPR.toFixed(2).toString());
+    setReward((Data.rewards / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,"));
     let Bal1 = "0 ANON", Bal2 = "0 MEH";
     if (wallet?.account?.address != null) { 
         Bal1 = await GetBalance(ANON);
@@ -236,7 +242,9 @@ function App() {
     <div className="Main">
       <TonConnectButton className="ConBtn" />
       <h1 className="H1">Staking</h1> 
-      <h3 className="H3">Reward pool: {reward} MEH</h3>
+      <h3 className="H33">Reward pool: {reward} MEH</h3>
+      <h3 className="H333">Estimated APR (might change): {APR}%</h3>
+      <h4 className="H3">Timer is counting down to the end of the deposit period</h4>
       <FlipClockCountdown 
         to={startTime} 
         className={"FlipClock"}
