@@ -103,7 +103,6 @@ function App() {
     let MnAmount = Data.amount1 * Data.ratio;
     if (Data.amount2 < MnAmount) { MnAmount = Data.amount2; }
     const ResultAPR = 1000000000000000000 / Number(MnAmount) / 21 * 365;
-    console.log(1, MnAmount, 1000000000000000000 / Number(MnAmount), ResultAPR)
     setAPR(ResultAPR.toFixed(2).toString());
     setReward((Data.rewards / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,"));
     let Bal1 = "0 ANON", Bal2 = "0 MEH";
@@ -130,7 +129,7 @@ function App() {
       let Data = await HelperContract.getContractData()
       setHelperNumber1((Data.amount1 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " ANON");
       setHelperNumber2((Data.amount2 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " MEH");
-      if ((Data.amount2 / toNano(1)) != (Data.amount1 / toNano(1)) * R) {
+      if (Data.amount2 != Data.amount1 * R) {
         setAnnouncement(true);
       } else {
         setAnnouncement(false);
