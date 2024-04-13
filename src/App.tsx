@@ -129,7 +129,12 @@ function App() {
       let Data = await HelperContract.getContractData()
       setHelperNumber1((Data.amount1 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " ANON");
       setHelperNumber2((Data.amount2 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " MEH");
-      if (Data.amount2 - Data.amount1 * R > toNano(1) || Data.amount1 * R - Data.amount2 > toNano(1)) {
+      let j = 0n;
+      if (Data.amount2 >= Data.amount1 * R) { j = Data.amount2 - Data.amount1 * R;}
+      else { j = Data.amount1 * R - Data.amount2; }
+      let ost = Data.amount1 * R / 100n;
+      if (ost < toNano(1)) {ost = toNano(1);}
+      if (j > ost) {
         setAnnouncement(true);
       } else {
         setAnnouncement(false);
