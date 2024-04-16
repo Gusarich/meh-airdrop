@@ -44,6 +44,7 @@ function App() {
   const [tonConnectUI, setOptions] = useTonConnectUI();
   const wallet = useTonWallet();
   const [ratio, setRatio] = useState(0);
+  const [ClaimReward, setClaimReward] = useState("0");
   const [startTime, setStartTime] = useState(0);
   const [reward, setReward] = useState("0");
   const [Open, setOpen] = useState(false);
@@ -126,20 +127,47 @@ function App() {
     if (wallet?.account?.address != null) {
       setOpen(true);
       let HelperContract = await client.open(await MasterContract.getHelper(Address.parse(wallet?.account?.address)));
-      let Data = await HelperContract.getContractData()
-      setHelperNumber1((Data.amount1 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " ANON");
-      setHelperNumber2((Data.amount2 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " MEH");
-      let j = 0n;
-      if (Data.amount2 >= Data.amount1 * R) { j = Data.amount2 - Data.amount1 * R;}
-      else { j = Data.amount1 * R - Data.amount2; }
-      let ost = Data.amount1 * R / 100n;
-      if (ost < toNano(1)) {ost = toNano(1);}
-      if (j > ost) {
-        setAnnouncement(true);
-      } else {
-        setAnnouncement(false);
+      let DataHelper = await HelperContract.getContractData()
+      setHelperNumber1((DataHelper.amount1 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " ANON");
+      setHelperNumber2((DataHelper.amount2 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " MEH");
+      let effective_amount: any = DataHelper.amount1 * R;
+      if (DataHelper.amount2 < effective_amount) {
+        effective_amount = DataHelper.amount2;
       }
+      let total_effective_amount: any = Data.amount1 * R;
+      if (Data.amount2 < total_effective_amount) {
+        total_effective_amount = Data.amount2;
+      }
+      let delta: any = BigInt(Math.floor(Date.now() / 1000) - DataHelper.lastClaimTime);
+      const DifTime: any = BigInt(Data.endTime - Data.startTime)
+      let reward: any = effective_amount * Data.rewards * delta / total_effective_amount / DifTime;
+      const result = (reward / toNano(1)).toString();
+      // console.log(reward, reward / (toNano(1) / 100n) % 100n)
+      let ost = reward / (toNano(1) / 100n) % 100n;
+      if (ost < 0) ost += -2n*ost;
+      setClaimReward(result.replace(/(\d)(?=(\d{3})+$)/g, "$1,") + "." + ost.toString() + " MEH");
     } 
+  }
+
+  async function ClaimRewards() {
+    if (wallet?.account?.address == null) return;
+    const client = await getClient();
+    let MasterContract = await client.open(Master.createFromAddress(Address.parse(MasterAddress)));
+    let HelperContract = await client.open(await MasterContract.getHelper(Address.parse(wallet?.account?.address)));
+    const body = beginCell()
+    .storeUint(0x4d0c099d, 32)
+    .storeUint(0, 64)
+    .endCell();
+    await tonConnectUI.sendTransaction({
+      messages: [
+        {
+          address: HelperContract.address.toString(), // this.Master.address.toString()
+          amount: toNano(0.2).toString(),
+          payload: body.toBoc().toString("base64") 
+        },
+      ],
+      validUntil: Date.now() + 5 * 60 * 1000
+    })
   }
 
   async function Go2() {
@@ -165,14 +193,6 @@ function App() {
       ],
       validUntil: Date.now() + 5 * 60 * 1000
     })
-    // await HelperContract.sendUnstake(
-    //   new Sender(tonConnectUI),
-    //   toNano(0.2),
-    //   {
-    //     amount1: toNano(HelperNumber1.slice(0, -5)),
-    //     amount2: toNano(HelperNumber2.slice(0, -4)),
-    //   }
-    // )
   }
 
   async function GetBalance(address: string) {
@@ -249,9 +269,9 @@ function App() {
       <h1 className="H1">Staking</h1> 
       <h3 className="H33">Reward pool: {reward} MEH</h3>
       <h3 className="H333">Estimated APR (might change): {APR}%</h3>
-      <h4 className="H3">Timer is counting down to the end of the deposit period</h4>
+      <h4 className="H3 CenterTimer">Timer is counting down to the end of the rewarding period</h4>
       <FlipClockCountdown 
-        to={startTime} 
+        to={1715158800000} 
         className={"FlipClock"}
         digitBlockStyle={{background: "linear-gradient(180deg, #272E32 0%, #232A2E 100%)", 
         color: "#9FA2A4", height: 48, fontSize: 35, borderRadius: 10,
@@ -264,7 +284,8 @@ function App() {
       </FlipClockCountdown>
       {!Open ? "" :
         <>
-          <div className="Tog">
+          <h3 className="H3Reward">Available rewards: {ClaimReward}</h3>
+          {/* <div className="Tog">
             <div className="Show">
               <h5 className="H5">available: {Balance1}</h5>
               <InputU CurValue={value1} value={"0"} disabled={false} onChange={AnonChange} img={anon} placeholder={"ANON"} id={"ANON"} />
@@ -273,10 +294,14 @@ function App() {
               <h5 className="H5">available: {Balance2}</h5>
               <InputU CurValue={value2} value={"0"} disabled={false} onChange={MehChange} img={meh} placeholder={"MEH"} id={"MEH"} />
             </div>
-          </div>
+          </div> */}
           <div className="Tog3">
-            <button onClick={Go} className="Stake">Stake</button>
-            <button onClick={Go2} className="Stake">Unstake all</button>
+            <div className="Show">
+              {/* <h5 className="H5">available: {Balance2}</h5> */}
+              <button onClick={ClaimRewards} className="Stake">Collect</button>
+            </div>
+            {/* <button onClick={Go} className="Stake">Stake</button>
+            <button onClick={Go2} className="Stake">Unstake all</button> */}
           </div>
           {!Enough ? <h4 className="Anoun">{Text}</h4> : ""}
           {Announcement ? <h4 className="Anoun2">Your MEH to ANON ratio is incorrect. Please “Unstake all” and stake again.</h4> : ""}

@@ -268,3 +268,14 @@ a {
 .H4 {
     margin: 0;
 }
+
+.H3Reward {
+    margin-top: 40px;
+    text-align: center;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.CenterTimer {
+    text-align: center;
+}
