@@ -5,6 +5,8 @@ body {
 }
 
 .Footer {
+    display: flex;
+    gap: 20px;
     position: absolute;
     bottom: 20px;
 }
@@ -60,6 +62,14 @@ a {
     position: absolute;
     top: 20px;
     right: 0px;
+}
+
+.TitleLink {
+    position: absolute;
+    top: 22px;
+    font-size: 24px;
+    left: 20px;
+    
 }
 
 .Title {
