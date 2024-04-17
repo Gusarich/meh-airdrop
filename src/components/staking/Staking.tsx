@@ -268,7 +268,7 @@ function App() {
       <TonConnectButton className="ConBtn" />
       <h1 className="H1">Staking</h1> 
       <h3 className="H33">Reward pool: {reward} MEH</h3>
-      <h3 className="H333">Estimated APR (might change): {APR}%</h3>
+      <h3 className="H333">Staking APR: {APR}%</h3>
       <h4 className="H3 CenterTimer">Timer is counting down to the end of the rewarding period</h4>
       <FlipClockCountdown 
         to={1715158800000} 
