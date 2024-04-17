@@ -21,17 +21,6 @@ export class Helper implements Contract {
         });
     }
 
-    async getContractData(provider: ContractProvider) {
-        let result = (await provider.get('get_contract_data', [])).stack;
-        return {
-            master: result.readAddress(),
-            user: result.readAddress(),
-            amount1: result.readBigNumber(),
-            amount2: result.readBigNumber(),
-            endTime: result.readNumber(),
-        };
-    }
-
     async sendUnstake(
         provider: ContractProvider,
         via: Sender,
@@ -48,5 +37,18 @@ export class Helper implements Contract {
                 .storeCoins(opts.amount2 ?? 0)
                 .endCell(),
         });
+    }
+
+    async getContractData(provider: ContractProvider) {
+        let result = (await provider.get('get_contract_data', [])).stack;
+        return {
+            master: result.readAddress(),
+            user: result.readAddress(),
+            amount1: result.readBigNumber(),
+            amount2: result.readBigNumber(),
+            startTime: result.readNumber(),
+            endTime: result.readNumber(),
+            lastClaimTime: result.readNumber(),
+        };
     }
 }
