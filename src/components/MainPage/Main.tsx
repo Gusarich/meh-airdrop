@@ -26,17 +26,26 @@ function Main() {
               <Link to="/staking" className={styles.A2}>Staking</Link>
             </div>
           </div>
+          <div className={styles.Info}> 
+            <h2 className={styles.Title2}>Our links</h2>
+            <ul className={styles.Ul}>
+              <li className={styles.Spec}><a className={styles.Process2} href="https://coinmarketcap.com/currencies/meh-coin/">Coinmarketcap</a></li>
+              <li className={styles.Spec}><a className={styles.Process2} href="https://www.coingecko.com/en/coins/meh-on-ton">Coingecko</a></li>
+              <li className={styles.Spec}><a className={styles.Process2} href="https://t.me/mehtoken">Telegram</a></li>
+              <li className={styles.Spec}><a className={styles.Process2} href="https://x.com/meh_ton">X</a></li>
+            </ul>
+          </div>
         </div>
         <h1 className={styles.TitleRoad}>Roadmap</h1>
         <ul className={styles.ListRoad}>
           <li><p className={styles.Done}>Presale</p></li>
           <li><p className={styles.Done}>DeDust.io listing</p></li>
           <li><p className={styles.Done}>Double Staking Event</p></li>
-          <li className={styles.Spec}><p className={styles.Process}>Activity Contest</p></li>
+          <li><p className={styles.Done}>Activity Contest</p></li>
+          <li><p className={styles.Done}>Coingecko & Coinmarketcap listings</p></li>
           <li className={styles.Spec}><p className={styles.Process}>MEH DAO</p></li>
           <li className={styles.Spec}><p className={styles.Process}>Welcoming Airdrop for new Holders</p></li>
           <li className={styles.Spec}><p className={styles.Process}>Retrodrop for DAO voters</p></li>
-          <li className={styles.Spec}><p className={styles.Process}>Coingecko & Coinmarketcap listings</p></li>
           <li className={styles.Spec}><p className={styles.Process}>Airdrop Creation platform</p></li>
           <li className={styles.Spec}><p className={styles.Process}>NFT Collection with more utility</p></li>
           <li className={styles.Spec}><p className={styles.Process}>Airdrops V2</p></li>
