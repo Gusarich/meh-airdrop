@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://mishazhem.github.io/Anon_Meh/",
+  "homepage": "https://meh.promo",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

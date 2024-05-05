@@ -11,7 +11,7 @@ import { TonConnectUIProvider } from "@tonconnect/ui-react";
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <TonConnectUIProvider manifestUrl="https://mishazhem.github.io/Anon_Meh/manifest.json">
     <React.StrictMode>
-      <Router basename={"/Anon_Meh/"}>
+      <Router basename={"/"}>
         <App />
       </Router>
     </React.StrictMode>
