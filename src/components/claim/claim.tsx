@@ -40,7 +40,7 @@ function ClaimPage() {
 
   async function CheckInfo() {
     if (wallet?.account?.address == null) {
-      setText("Sorry, but your wallet address is not eligible for airdrop or you have already received the reward 🙁");
+      setText("Connect your wallet to check if you’re eligible");
       setCan(false);
       return;
     }
@@ -67,13 +67,13 @@ function ClaimPage() {
     CheckInfo();
   });
 
-  const [Text, setText] = useState("Sorry, but your wallet address is not eligible for airdrop or you have already received the reward 🙁")
+  const [Text, setText] = useState("Connect your wallet to check if you’re eligible")
   const [Can, setCan] = useState(false);
   return (
     <div className="Main">
       <Link to='/' className="TitleLink">Main</Link>
       <TonConnectButton className="ConBtn" />
-      <h1 className="H1">Claim your reward for <a className="A1" href="https://t.me/mehtoken/97">Activity Contest</a></h1> 
+      <h1 style={{marginBottom: 12}} className="H1 DownH CenterTimer">Claim your reward for <a className="A1" href="https://t.me/mehtoken/97">Activity Contest</a></h1> 
       <h3 className="H333 CenterTimer TextClaim">{Text}</h3>
       <button id="Claim" disabled={!Can} onClick={() => (Can ? ClaimRewards() : "")} className={`Stake ${Can ? "" : "Blocked"}`}>Claim</button>
     </div>

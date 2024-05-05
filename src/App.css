@@ -183,6 +183,10 @@ a {
     text-decoration: underline;
 }
 
+.DownH {
+    margin-bottom: 16px;
+}
+
 .Blocked {
     background: linear-gradient(178deg, #00D1FF -11.21%, #009AFF 98.65%);
     opacity: 0.6;
