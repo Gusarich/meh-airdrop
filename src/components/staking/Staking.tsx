@@ -142,10 +142,8 @@ function App() {
       const DifTime: any = BigInt(Data.endTime - Data.startTime)
       let reward: any = effective_amount * Data.rewards * delta / total_effective_amount / DifTime;
       const result = (reward / toNano(1)).toString();
-      // console.log(reward, reward / (toNano(1) / 100n) % 100n)
-      let ost = reward / (toNano(1) / 100n) % 100n;
-      if (ost < 0) ost += -2n*ost;
-      setClaimReward(result.replace(/(\d)(?=(\d{3})+$)/g, "$1,") + "." + ost.toString() + " MEH");
+      let ost = (reward / (toNano(1) / 100n)).toString().slice(-2);
+      setClaimReward(result.replace(/(\d)(?=(\d{3})+$)/g, "$1,") + "." + ost + " MEH");
     } 
   }
 
