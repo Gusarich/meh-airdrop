@@ -14,13 +14,18 @@ function ClaimPage() {
   const MasterAddress = "EQAx-B_myGJ6i7u6_JRZz33n9fDfIF_NF3bwPt3OwP6p_py1";
   const ANON = "EQDv-yr41_CZ2urg2gfegVfa44PDPjIK9F-MilEDKDUIhlwZ";
   const MEH = "EQAVw-6sK7NJepSjgH1gW60lYEkHYzSmK9pHbXstCClDY4BV";
-  const DistributorAddress = "EQCJXgVplbjwbGXso9bYpV0VyyEgcOy_XsVZOrBdlOMK0WMo"
+  const DistributorAddress = "EQBpunYORFowzfbNxZdLwP0sRzOR705JrODChkR9yOxIBkBU"
+  const DistributorAddress2 = "EQAbjrttvSW1873SgghFzyOuw9hk6-__Ja2ej4MC991Dlj_0"
 
   async function ClaimRewards() {
     if (wallet?.account?.address == null) return;
     const client = await getClient();
+    let NeedAddress = DistributorAddress;
     let DistributorContract = await client.open(Distributor.createFromAddress(Address.parse(DistributorAddress)));
     let Data = await DistributorContract.getAvailableReward(Address.parse(wallet?.account?.address));
+    if (Data == 0n) {
+      NeedAddress = DistributorAddress2;
+    }
     // DistributorContract.sendClaim(new Sender(tonConnectUI), Data);
     // const body = beginCell()
     // .storeUint(0x4d0c099d, 32)
@@ -29,7 +34,7 @@ function ClaimPage() {
     await tonConnectUI.sendTransaction({
       messages: [
         {
-          address: DistributorAddress,
+          address: NeedAddress,
           amount: toNano(0.01).toString(),
           // payload: body.toBoc().toString("base64") 
         },
@@ -48,6 +53,10 @@ function ClaimPage() {
     try {
       let DistributorContract = await client.open(Distributor.createFromAddress(Address.parse(DistributorAddress)));
       let Data = await DistributorContract.getAvailableReward(Address.parse(wallet?.account?.address));
+      if (Data == 0n) {
+        DistributorContract = await client.open(Distributor.createFromAddress(Address.parse(DistributorAddress2)));
+        Data = await DistributorContract.getAvailableReward(Address.parse(wallet?.account?.address));
+      }
       const res = (Data / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + "." + (Data / (toNano(1) / 100n)).toString().slice(-2)
       if (res == "0.0") {
         setText("Sorry, but your wallet address is not eligible for airdrop or you have already received the reward 🙁");
