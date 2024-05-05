@@ -177,6 +177,12 @@ a {
     max-width: 500px;
 }
 
+.A1 {
+    font-size: 32px;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
 .Blocked {
     background: linear-gradient(178deg, #00D1FF -11.21%, #009AFF 98.65%);
     opacity: 0.6;

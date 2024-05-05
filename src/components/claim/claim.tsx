@@ -73,7 +73,7 @@ function ClaimPage() {
     <div className="Main">
       <Link to='/' className="TitleLink">Main</Link>
       <TonConnectButton className="ConBtn" />
-      <h1 className="H1">Claim rewards</h1> 
+      <h1 className="H1">Claim your reward for <a className="A1" href="https://t.me/mehtoken/97">Activity Contest</a></h1> 
       <h3 className="H333 CenterTimer TextClaim">{Text}</h3>
       <button id="Claim" disabled={!Can} onClick={() => (Can ? ClaimRewards() : "")} className={`Stake ${Can ? "" : "Blocked"}`}>Claim</button>
     </div>
