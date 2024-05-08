@@ -3,7 +3,7 @@ import * as buffer from "buffer"
 import { JettonWallet } from '../../../wrappers/JettonWallet';
 import FlipClockCountdown from '@leenguyen/react-flip-clock-countdown';
 import '@leenguyen/react-flip-clock-countdown/dist/index.css';
-import { anon, meh } from "../../assets";
+import { anon, meh, raff } from "../../assets";
 import { ChangeEventHandler, useEffect, useState } from "react";
 import { getClient } from "../../ton/tonConfig";
 import { Address, beginCell, Cell, OpenedContract, toNano } from '@ton/core'
@@ -50,28 +50,28 @@ function App() {
   const [Open, setOpen] = useState(false);
   const [value1, setValue1] = useState("");
   const [value2, setValue2] = useState("");
-  const [Balance1, setBalance1] = useState("0 ANON");
+  const [Balance1, setBalance1] = useState("0 RAFF");
   const [Balance2, setBalance2] = useState("0 MEH");
   const [APR, setAPR] = useState("0");
   const [MasterNumber1, setMasterNumber1] = useState("0");
   const [MasterNumber2, setMasterNumber2] = useState("0");
-  const [HelperNumber1, setHelperNumber1] = useState("0 ANON");
+  const [HelperNumber1, setHelperNumber1] = useState("0 RAFF");
   const [HelperNumber2, setHelperNumber2] = useState("0 MEH");
   const [Text, setText] = useState("not enough MEH");
   const [Enough, setEnough] = useState(true);
   const [Announcement, setAnnouncement] = useState(false);
   const MasterAddress = "EQAx-B_myGJ6i7u6_JRZz33n9fDfIF_NF3bwPt3OwP6p_py1";
-  const ANON = "EQDv-yr41_CZ2urg2gfegVfa44PDPjIK9F-MilEDKDUIhlwZ";
+  const RAFF = "EQCJbp0kBpPwPoBG-U5C-cWfP_jnksvotGfArPF50Q9Qiv9h";
   const MEH = "EQAVw-6sK7NJepSjgH1gW60lYEkHYzSmK9pHbXstCClDY4BV";
 
-  function AnonChange(val: any) {
+  function RAFFChange(val: any) {
     const T = val.replaceAll(",", "");
     setValue1(T.replace(/(\d)(?=(\d{3})+$)/g, "$1,"));
     // (document.getElementById("MEH") as HTMLInputElement).value = (Number(val) * ratio).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,");
     setValue2((Number(T) * ratio).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,"));
     if (toNano(T) > toNano(Balance1.slice(0, -5).replaceAll(",", "")) || toNano(Number(T) * ratio) > toNano(Balance2.slice(0, -4).replaceAll(",", ""))) {
       setEnough(false);
-      if (toNano(T) > toNano(Balance1.slice(0, -5).replaceAll(",", ""))) setText("not enough ANON");
+      if (toNano(T) > toNano(Balance1.slice(0, -5).replaceAll(",", ""))) setText("not enough RAFF");
       else setText("not enough MEH");
     } else {
       setEnough(true);
@@ -81,12 +81,12 @@ function App() {
   function MehChange(val: any) {
     const T = val.replaceAll(",", "");
     setValue2(T.replace(/(\d)(?=(\d{3})+$)/g, "$1,"));
-    // (document.getElementById("ANON") as HTMLInputElement).value = (Number(val) / ratio).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,");
+    // (document.getElementById("RAFF") as HTMLInputElement).value = (Number(val) / ratio).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,");
     setValue1((Number(T) / ratio).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,"));
     if (toNano(T) > toNano(Balance2.slice(0, -4).replaceAll(",", "")) || toNano(Number(T) / ratio) > toNano(Balance1.slice(0, -5).replaceAll(",", ""))) {
       setEnough(false);
       if (toNano(T) > toNano(Balance2.slice(0, -4).replaceAll(",", ""))) setText("not enough MEH");
-      else setText("not enough ANON");
+      else setText("not enough RAFF");
     } else {
       setEnough(true);
     }
@@ -99,26 +99,26 @@ function App() {
     setStartTime(Data.startTime * 1000);
     setRatio(Number(Data.ratio));
     const R = Data.ratio;
-    setMasterNumber1((Data.amount1 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " ANON");
+    setMasterNumber1((Data.amount1 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " RAFF");
     setMasterNumber2((Data.amount2 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " MEH");
     let MnAmount = Data.amount1 * Data.ratio;
     if (Data.amount2 < MnAmount) { MnAmount = Data.amount2; }
     const ResultAPR = 1000000000000000000 / Number(MnAmount) / 21 * 365;
     setAPR(ResultAPR.toFixed(2).toString());
     setReward((Data.rewards / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,"));
-    let Bal1 = "0 ANON", Bal2 = "0 MEH";
+    let Bal1 = "0 RAFF", Bal2 = "0 MEH";
     if (wallet?.account?.address != null) { 
-        Bal1 = await GetBalance(ANON);
+        Bal1 = await GetBalance(RAFF);
         Bal2 = await GetBalance(MEH);
-        setBalance1(Bal1.replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " ANON");
+        setBalance1(Bal1.replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " RAFF");
         setBalance2(Bal2.replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " MEH");
     }
     try {
-      const T1 = (document.getElementById("ANON") as HTMLInputElement).value.replaceAll(",", "");
+      const T1 = (document.getElementById("RAFF") as HTMLInputElement).value.replaceAll(",", "");
       const T2 = (document.getElementById("MEH") as HTMLInputElement).value.replaceAll(",", "");
       if (toNano(T1) > toNano(Bal1) || toNano(T2) > toNano(Bal2)) {
         setEnough(false);
-        if (toNano(T1) > toNano(Bal1)) setText("not enough ANON");
+        if (toNano(T1) > toNano(Bal1)) setText("not enough RAFF");
         else setText("not enough MEH");
       } else {
         setEnough(true);
@@ -128,7 +128,7 @@ function App() {
       setOpen(true);
       let HelperContract = await client.open(await MasterContract.getHelper(Address.parse(wallet?.account?.address)));
       let DataHelper = await HelperContract.getContractData()
-      setHelperNumber1((DataHelper.amount1 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " ANON");
+      setHelperNumber1((DataHelper.amount1 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " RAFF");
       setHelperNumber2((DataHelper.amount2 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " MEH");
       let effective_amount: any = DataHelper.amount1 * R;
       if (DataHelper.amount2 < effective_amount) {
@@ -138,7 +138,7 @@ function App() {
       if (Data.amount2 < total_effective_amount) {
         total_effective_amount = Data.amount2;
       }
-      let delta: any = BigInt(Math.floor(1715158800000 / 1000) - DataHelper.lastClaimTime);
+      let delta: any = BigInt(Math.floor(Date.now() / 1000) - DataHelper.lastClaimTime);
       const DifTime: any = BigInt(Data.endTime - Data.startTime)
       let reward: any = effective_amount * Data.rewards * delta / total_effective_amount / DifTime;
       const result = (reward / toNano(1)).toString();
@@ -205,24 +205,24 @@ function App() {
 
   async function Go() {
     if (tonConnectUI.account?.address == null) return;
-    const T1 = (document.getElementById("ANON") as HTMLInputElement).value.replaceAll(",", "");
+    const T1 = (document.getElementById("RAFF") as HTMLInputElement).value.replaceAll(",", "");
     const T2 = (document.getElementById("MEH") as HTMLInputElement).value.replaceAll(",", "");
     if (toNano(T1) > toNano(Balance1.slice(0, -5).replaceAll(",", "")) || toNano(T2) > toNano(Balance2.slice(0, -4).replaceAll(",", ""))) {
       return;
     }
     const client = await getClient();
-    // ANON
+    // RAFF
     let body1 = beginCell()
         .storeUint(0xf8a7ea5, 32)         
         .storeUint(0, 64)                       
-        .storeCoins(toNano((document.getElementById("ANON") as HTMLInputElement).value.replaceAll(",", ""))) // amount                
+        .storeCoins(toNano((document.getElementById("RAFF") as HTMLInputElement).value.replaceAll(",", ""))) // amount                
         .storeAddress(Address.parse(MasterAddress))                 
         .storeAddress(Address.parse(tonConnectUI.account.address))             
         .storeUint(0, 1)                      
         .storeCoins(toNano(0.1))               
         .storeUint(0,1)                        
         .endCell();
-    let jettonMasterCustom1 = client.open(JettonMaster.create(Address.parse(ANON)));
+    let jettonMasterCustom1 = client.open(JettonMaster.create(Address.parse(RAFF)));
     let jettonWalletJUSD1 = await jettonMasterCustom1.getWalletAddress(Address.parse(tonConnectUI.account?.address));
     // MEH
     let body = beginCell()
@@ -266,8 +266,8 @@ function App() {
       <TonConnectButton className="ConBtn" />
       <h1 className="H1">Staking</h1> 
       <h3 className="H33">Reward pool: {reward} MEH</h3>
-      <h3 className="H333">Staking APR: {APR}%</h3>
-      <h4 className="H3 CenterTimer">Timer is counting down to the end of the rewarding period</h4>
+      <h3 className="H333">Estimated APR (might change): {APR}%</h3>
+      <h4 className="H3 CenterTimer">Timer is counting down to the end of the deposit period</h4>
       <FlipClockCountdown 
         to={1715158800000} 
         className={"FlipClock"}
@@ -282,33 +282,30 @@ function App() {
       </FlipClockCountdown>
       {!Open ? "" :
         <>
-          <h3 className="H3Reward">Available rewards: {ClaimReward}</h3>
-          {/* <div className="Tog">
+          {/* <h3 className="H3Reward">Available rewards: {ClaimReward}</h3> */}
+          <div className="Tog">
             <div className="Show">
               <h5 className="H5">available: {Balance1}</h5>
-              <InputU CurValue={value1} value={"0"} disabled={false} onChange={AnonChange} img={anon} placeholder={"ANON"} id={"ANON"} />
+              <InputU CurValue={value1} value={"0"} disabled={false} onChange={RAFFChange} img={raff} placeholder={"RAFF"} id={"RAFF"} />
             </div>
             <div className="Show">
               <h5 className="H5">available: {Balance2}</h5>
               <InputU CurValue={value2} value={"0"} disabled={false} onChange={MehChange} img={meh} placeholder={"MEH"} id={"MEH"} />
             </div>
-          </div> */}
+          </div>
           <div className="Tog3">
-            <div className="Show">
-              {/* <h5 className="H5">available: {Balance2}</h5> */}
-              <button onClick={ClaimRewards} className="Stake">Unstake & Claim</button>
-            </div>
-            {/* <button onClick={Go} className="Stake">Stake</button>
-            <button onClick={Go2} className="Stake">Unstake all</button> */}
+      
+            <button onClick={Go} className="Stake">Stake</button>
+            <button onClick={Go2} className="Stake">Unstake all</button>
           </div>
           {!Enough ? <h4 className="Anoun">{Text}</h4> : ""}
-          {Announcement ? <h4 className="Anoun2">Your MEH to ANON ratio is incorrect. Please “Unstake all” and stake again.</h4> : ""}
+          {Announcement ? <h4 className="Anoun2">Your MEH to RAFF ratio is incorrect. Please “Unstake all” and stake again.</h4> : ""}
         </> 
       }
       <div className="Info">
         <h1 className="AllTitle">Total staked</h1>
         <div className="Tog2">
-          <InputU2 CurValue={""} value={MasterNumber1} disabled={true} onChange={AnonChange} img={anon} placeholder={"ANON"} id={"ANON"} />
+          <InputU2 CurValue={""} value={MasterNumber1} disabled={true} onChange={RAFFChange} img={raff} placeholder={"RAFF"} id={"RAFF"} />
           <InputU2 CurValue={""} value={MasterNumber2} disabled={true} onChange={MehChange} img={meh} placeholder={"MEH"} id={"MEH"} />
         </div>
         {!Open ? 
@@ -319,7 +316,7 @@ function App() {
         <>
           <h1 className="AllTitle">Your stake</h1>
           <div className="Tog2">
-            <InputU2 CurValue={""} value={HelperNumber1} disabled={true} onChange={AnonChange} img={anon} placeholder={"ANON"} id={"ANON"} />
+            <InputU2 CurValue={""} value={HelperNumber1} disabled={true} onChange={RAFFChange} img={raff} placeholder={"RAFF"} id={"RAFF"} />
             <InputU2 CurValue={""} value={HelperNumber2} disabled={true} onChange={MehChange} img={meh} placeholder={"MEH"} id={"MEH"} />
           </div>
         </>}
