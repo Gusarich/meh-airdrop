@@ -23,7 +23,7 @@ function Main() {
             <div className={styles.InfoLinks}>
               <a href="https://dedust.io/swap/ton/meh" className={styles.A2}>Swap</a>
               <a href="https://tonviewer.com/EQAVw-6sK7NJepSjgH1gW60lYEkHYzSmK9pHbXstCClDY4BV?section=jetton" className={styles.A2}>Explorer</a>
-              <Link to="/staking" className={styles.A2}>Staking</Link>
+              <Link to="/stakingraff" className={styles.A2}>Staking</Link>
               {/* <Link to="/claim" className={styles.A2}>Claim</Link> */}
             </div>
           </div>

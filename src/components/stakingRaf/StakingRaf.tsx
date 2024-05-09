@@ -7,7 +7,7 @@ import { anon, meh, raff } from "../../assets";
 import { ChangeEventHandler, useEffect, useState } from "react";
 import { getClient } from "../../ton/tonConfig";
 import { Address, beginCell, Cell, OpenedContract, toNano } from '@ton/core'
-import { Master } from "../../../wrappers/Master"
+import { Master } from "../../../wrappers/MasterRaf"
 import { JettonMaster } from "@ton/ton";
 import {Link} from "react-router-dom"
 import {Sender} from "../../../scripts/sender"
@@ -45,8 +45,11 @@ function App() {
   const wallet = useTonWallet();
   const [ratio, setRatio] = useState(0);
   const [ClaimReward, setClaimReward] = useState("0");
+  const [ClaimReward2, setClaimReward2] = useState("0");
   const [startTime, setStartTime] = useState(0);
+  const [endTime, setEndTime] = useState(0);
   const [reward, setReward] = useState("0");
+  const [reward2, setReward2] = useState("0");
   const [Open, setOpen] = useState(false);
   const [value1, setValue1] = useState("");
   const [value2, setValue2] = useState("");
@@ -60,7 +63,7 @@ function App() {
   const [Text, setText] = useState("not enough MEH");
   const [Enough, setEnough] = useState(true);
   const [Announcement, setAnnouncement] = useState(false);
-  const MasterAddress = "EQAx-B_myGJ6i7u6_JRZz33n9fDfIF_NF3bwPt3OwP6p_py1";
+  const MasterAddress = "UQCahmPNnECWJziD-r75vjFf8g_E_AQ38nrQ_Gw9kOz7TDuU";
   const RAFF = "EQCJbp0kBpPwPoBG-U5C-cWfP_jnksvotGfArPF50Q9Qiv9h";
   const MEH = "EQAVw-6sK7NJepSjgH1gW60lYEkHYzSmK9pHbXstCClDY4BV";
 
@@ -82,7 +85,7 @@ function App() {
     const T = val.replaceAll(",", "");
     setValue2(T.replace(/(\d)(?=(\d{3})+$)/g, "$1,"));
     // (document.getElementById("RAFF") as HTMLInputElement).value = (Number(val) / ratio).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,");
-    setValue1((Number(T) / ratio).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,"));
+    setValue1(Math.trunc(Number(T) / ratio).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + "." + (Number(T) % ratio).toString().padStart(2, '0').slice(0, 2));
     if (toNano(T) > toNano(Balance2.slice(0, -4).replaceAll(",", "")) || toNano(Number(T) / ratio) > toNano(Balance1.slice(0, -5).replaceAll(",", ""))) {
       setEnough(false);
       if (toNano(T) > toNano(Balance2.slice(0, -4).replaceAll(",", ""))) setText("not enough MEH");
@@ -93,19 +96,22 @@ function App() {
   }
 
   async function GetInfo(){
-    const client = await getClient()
+    const client = await getClient();
     let MasterContract = await client.open(Master.createFromAddress(Address.parse(MasterAddress)));
-    let Data = await MasterContract.getContractData()
+    let Data = await MasterContract.getContractData();
     setStartTime(Data.startTime * 1000);
+    setEndTime(Data.endTime * 1000);
     setRatio(Number(Data.ratio));
     const R = Data.ratio;
     setMasterNumber1((Data.amount1 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " RAFF");
     setMasterNumber2((Data.amount2 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,") + " MEH");
     let MnAmount = Data.amount1 * Data.ratio;
     if (Data.amount2 < MnAmount) { MnAmount = Data.amount2; }
-    const ResultAPR = 1000000000000000000 / Number(MnAmount) / 21 * 365;
+    const ResultAPR = 660000000000000000 / Number(MnAmount) / 3 * 365;
     setAPR(ResultAPR.toFixed(2).toString());
-    setReward((Data.rewards / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,"));
+    // console.log("Okay", ResultAPR, Data);
+    setReward((Data.rewards1 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,"));
+    setReward2((Data.rewards2 / toNano(1)).toString().replace(/(\d)(?=(\d{3})+$)/g, "$1,"));
     let Bal1 = "0 RAFF", Bal2 = "0 MEH";
     if (wallet?.account?.address != null) { 
         Bal1 = await GetBalance(RAFF);
@@ -140,10 +146,14 @@ function App() {
       }
       let delta: any = BigInt(Math.floor(Date.now() / 1000) - DataHelper.lastClaimTime);
       const DifTime: any = BigInt(Data.endTime - Data.startTime)
-      let reward: any = effective_amount * Data.rewards * delta / total_effective_amount / DifTime;
-      const result = (reward / toNano(1)).toString();
-      let ost = (reward / (toNano(1) / 100n)).toString().slice(-2);
-      setClaimReward(result.replace(/(\d)(?=(\d{3})+$)/g, "$1,") + "." + ost + " MEH");
+      let rewards1: any = effective_amount * Data.rewards1 * delta / total_effective_amount / DifTime;
+      const result1 = (rewards1 / toNano(1)).toString();
+      let ost1 = (rewards1 / (toNano(1) / 100n)).toString().slice(-2);
+      setClaimReward(result1.replace(/(\d)(?=(\d{3})+$)/g, "$1,") + "." + ost1 + " RAFF");
+      let rewards2: any = effective_amount * Data.rewards2 * delta / total_effective_amount / DifTime;
+      const result2 = (rewards2 / toNano(1)).toString();
+      let ost2 = (rewards2 / (toNano(1) / 100n)).toString().slice(-2);
+      setClaimReward2(result2.replace(/(\d)(?=(\d{3})+$)/g, "$1,") + "." + ost2 + " MEH");
     } 
   }
 
@@ -265,11 +275,12 @@ function App() {
       <Link to='/' className="TitleLink">Main</Link>
       <TonConnectButton className="ConBtn" />
       <h1 className="H1">Staking</h1> 
-      <h3 className="H33">Reward pool: {reward} MEH</h3>
-      <h3 className="H333">Estimated APR (might change): {APR}%</h3>
-      <h4 className="H3 CenterTimer">Timer is counting down to the end of the deposit period</h4>
+      <h3 className="H33 CenterTimer">Reward pool: {reward} MEH + {reward2} RAFF</h3>
+      <h3 className="H333 CenterTimer">{Date.now() >= startTime ?  "Staking APR" : "Estimated APR (might change)"}: {APR}%</h3>
+      <h4 className="H3 CenterTimer">{Date.now() < startTime ? "Timer is counting down to the end of the deposit period" : "Timer is counting down to the end of the rewarding period"}</h4>
       <FlipClockCountdown 
-        to={1715158800000} 
+        to={Date.now() >= startTime ? endTime : startTime} 
+        // to={startTime}
         className={"FlipClock"}
         digitBlockStyle={{background: "linear-gradient(180deg, #272E32 0%, #232A2E 100%)", 
         color: "#9FA2A4", height: 48, fontSize: 35, borderRadius: 10,
@@ -282,7 +293,7 @@ function App() {
       </FlipClockCountdown>
       {!Open ? "" :
         <>
-          {/* <h3 className="H3Reward">Available rewards: {ClaimReward}</h3> */}
+          {Date.now() >= startTime ? <h3 className="H3Reward">Available rewards: {ClaimReward} + {ClaimReward2}</h3> :
           <div className="Tog">
             <div className="Show">
               <h5 className="H5">available: {Balance1}</h5>
@@ -292,11 +303,17 @@ function App() {
               <h5 className="H5">available: {Balance2}</h5>
               <InputU CurValue={value2} value={"0"} disabled={false} onChange={MehChange} img={meh} placeholder={"MEH"} id={"MEH"} />
             </div>
-          </div>
+          </div>}
           <div className="Tog3">
-      
-            <button onClick={Go} className="Stake">Stake</button>
-            <button onClick={Go2} className="Stake">Unstake all</button>
+            {Date.now() >= startTime ?
+            <div className="Show">
+              <button onClick={ClaimRewards} className="Stake">{Date.now() >= endTime ? "Unstake & Claim" : "Claim"}</button>
+            </div> :
+            <>
+              <button onClick={Go} className="Stake">Stake</button>
+              <button onClick={Go2} className="Stake">Unstake all</button>
+            </>
+            }
           </div>
           {!Enough ? <h4 className="Anoun">{Text}</h4> : ""}
           {Announcement ? <h4 className="Anoun2">Your MEH to RAFF ratio is incorrect. Please “Unstake all” and stake again.</h4> : ""}
