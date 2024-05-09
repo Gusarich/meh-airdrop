@@ -275,7 +275,7 @@ function App() {
       <Link to='/' className="TitleLink">Main</Link>
       <TonConnectButton className="ConBtn" />
       <h1 className="H1">Staking</h1> 
-      <h3 className="H33 CenterTimer">Reward pool: {reward} MEH + {reward2} RAFF</h3>
+      <h3 className="H33 CenterTimer">Reward pool: {reward} RAFF + {reward2} MEH</h3>
       <h3 className="H333 CenterTimer">{Date.now() >= startTime ?  "Staking APR" : "Estimated APR (might change)"}: {APR}%</h3>
       <h4 className="H3 CenterTimer">{Date.now() < startTime ? "Timer is counting down to the end of the deposit period" : "Timer is counting down to the end of the rewarding period"}</h4>
       <FlipClockCountdown 
