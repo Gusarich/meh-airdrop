@@ -144,7 +144,7 @@ function App() {
       if (Data.amount2 < total_effective_amount) {
         total_effective_amount = Data.amount2;
       }
-      let delta: any = BigInt(Math.floor(Date.now() / 1000) - DataHelper.lastClaimTime);
+      let delta: any = BigInt(Math.floor(Data.endTime) - DataHelper.lastClaimTime);
       const DifTime: any = BigInt(Data.endTime - Data.startTime)
       let rewards1: any = effective_amount * Data.rewards1 * delta / total_effective_amount / DifTime;
       const result1 = (rewards1 / toNano(1)).toString();
@@ -270,6 +270,8 @@ function App() {
   }
 
   useEffect(() => {GetInfo(); setInterval(() => GetInfo(), 5000)}, [wallet]);
+  console.log(new Date(endTime));
+  console.log(new Date(startTime));
   return (
     <div className="Main">
       <Link to='/' className="TitleLink">Main</Link>
