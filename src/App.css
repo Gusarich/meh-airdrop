@@ -194,6 +194,9 @@ a {
     opacity: 0.7;
 }
 
+.InfoVote {
+    max-width: 490px
+}
 
 .TextClaim {
     max-width: 500px;

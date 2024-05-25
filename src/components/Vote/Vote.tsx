@@ -58,7 +58,7 @@ function Vote() {
                 messages: [
             {
                         address: jettonWalletJUSD.toString(),
-                        amount: toNano(0.15).toString(),
+                        amount: toNano(0.06).toString(),
                         payload: body.toBoc().toString("base64") 
                     }
                 ],
@@ -76,14 +76,18 @@ function Vote() {
             .storeAddress(Address.parse(VotingAddress))                 
             .storeAddress(Address.parse(tonConnectUI.account.address))             
             .storeUint(0, 1)                      
-            .storeCoins(toNano(0.02))               
-            .storeUint(3,2) // 2 вариант                     
+            .storeCoins(toNano(0.02))   
+            .storeUint(0, 1)            
+            .storeUint(3,2) // 1 вариант                     
             .endCell();
+        let jettonMasterCustom = client.open(JettonMaster.create(Address.parse(MEH)));
+        let jettonWalletJUSD = await jettonMasterCustom.getWalletAddress(Address.parse(tonConnectUI.account?.address));
+
         await tonConnectUI.sendTransaction({
                 messages: [
             {
-                        address: VotingAddress, // this.Master.address.toString()
-                        amount: toNano(0.15).toString(),
+                        address: jettonWalletJUSD.toString(),
+                        amount: toNano(0.06).toString(),
                         payload: body.toBoc().toString("base64") 
                     }
                 ],
@@ -96,6 +100,7 @@ function Vote() {
             <Link to='/' className="TitleLink">Main</Link>
             <TonConnectButton className="ConBtn" />
             <h1 className="H1">MEH DAO</h1> 
+            <h3 className="H3 CenterTimer InfoVote">Your voting power depends on the amount of MEH that you hold and will be locked at May 27 15:00 UTC</h3>
             <h2 className="H3 CenterTimer">Burn 5,000,000 MEH?</h2>
             {Voted ? <h3 className="H3 CenterTimer">You have already voted for: {Choose}</h3> : ""}
             <div className="Tog4">
