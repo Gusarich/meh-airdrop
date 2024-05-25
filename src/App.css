@@ -173,6 +173,28 @@ a {
 	}
 }
 
+.Voting {
+    margin-top: 10px;
+    width: 200px;
+    color: #FFF;
+    font-size: 18px;
+    font-weight: 500;
+    border-radius: 15px;
+    padding: 8px;
+    background: linear-gradient(178deg, #00D1FF -11.21%, #009AFF 98.65%);
+    @media (max-width: 530px) {
+        width: 200px;
+	}
+    @media (max-width: 460px) {
+        width: 200px;
+	}
+}
+
+.Voted {
+    opacity: 0.7;
+}
+
+
 .TextClaim {
     max-width: 500px;
 }
@@ -246,6 +268,15 @@ a {
     gap: 20px;
     @media (max-width: 460px) {
         flex-direction: column;
+	}
+}
+
+.Tog4 {
+    display: flex;
+    gap: 20px;
+    @media (max-width: 460px) {
+        flex-direction: column;
+        gap: 10px;
 	}
 }
 

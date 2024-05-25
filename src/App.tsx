@@ -1,4 +1,4 @@
-import { Main, Staking, StakingRaf, ClaimPage } from './components'
+import { Main, Staking, StakingRaf, ClaimPage, Vote } from './components'
 import { Routes, Route } from 'react-router-dom'
 import './App.css'
 
@@ -10,6 +10,7 @@ function App() {
       <Route path='/staking' element={<Staking/>}></Route>
       <Route path='/stakingraff' element={<StakingRaf/>}></Route>
       <Route path='/claim' element={<ClaimPage/>}></Route>
+      <Route path='/DAO' element={<Vote/>}></Route>
     </Routes>
     </>
   )
